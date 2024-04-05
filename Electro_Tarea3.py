@@ -82,6 +82,9 @@ def laplace_solver(dx,V, V_boundary, tolerance=1e-6, max_iterations=10000):
             Valores de potencial inicial.
         V_boundary : numpy.array
             Valores de potencial en la frontera.
+            M Y N están contenidos en esta variable
+        dx : float
+            Tamaño de paso en la malla.
         tolerance : float, opcional
             Tolerancia para la convergencia.
         max_iterations : int, opcional
