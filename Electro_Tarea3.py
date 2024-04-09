@@ -11,7 +11,45 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Primer código: Solución analítica
-def solucion_analitica(N:int, M:int, dx:float, v0:float, terminos:int=50):
+import numpy as np
+
+def calcular_D(n: int, v0: float, a: float) -> float:
+    """
+    Calcula el coeficiente D en la solución analítica de la ecuación de Laplace en 2D.
+
+    Parámetros:
+        n : int
+            Índice del término de la serie.
+        v0 : float
+            Valor utilizado en el cálculo.
+        a : float
+            Límite del eje x.
+
+    Devuelve:
+        D : float
+            Coeficiente D calculado.
+    """
+    return -2 * v0 * (1 - (-1) ** n) / (n * np.pi)
+
+def calcular_C(D: float, k: float, b: float) -> float:
+    """
+    Calcula el coeficiente C en la solución analítica de la ecuación de Laplace en 2D.
+
+    Parámetros:
+        D : float
+            Coeficiente D.
+        k : float
+            Constante k.
+        b : float
+            Límite del eje y.
+
+    Devuelve:
+        C : float
+            Coeficiente C calculado.
+    """
+    return -D * (1 / np.sinh(k * b) + np.cosh(k * b) / np.sinh(k * b))
+
+def solucion_analitica(N: int, M: int, dx: float, v0: float, terminos: int = 50):
     """
     Calcula la solución analítica de la ecuación de Laplace en 2D.
 
@@ -35,19 +73,30 @@ def solucion_analitica(N:int, M:int, dx:float, v0:float, terminos:int=50):
         V : numpy.array
             Solución analítica de la ecuación de Laplace.
     """
+    # Calculando los límites de la malla
     a = N * dx
     b = M * dx
+    
+    # Creando los puntos en los ejes x e y
     x = np.linspace(0, a, N)
     y = np.linspace(0, b, M)
+    
+    # Creando la malla
     X, Y = np.meshgrid(x, y)
+    
+    # Inicializando la solución
     V = 0
 
+    # Sumando los términos de la serie
     for n in range(1, terminos + 1):
+        # Calculando k
         k = n * np.pi / a
-        D = -2 * v0 * (1 - (-1) ** n) / (n * np.pi)
-        #Valor de D obtenido analíticamente
-        C = -D * (1 / np.sinh(k * b) + np.cosh(k * b) / np.sinh(k * b))
-       #Valor de C obtenido analitcamente
+        
+        # Calculando los coeficientes D y C
+        D = calcular_D(n, v0, a)
+        C = calcular_C(D, k, b)
+        
+        # Actualizando la solución con el término actual
         V += np.sin(k * X) * (C * np.sinh(k * Y) + D * np.cosh(k * Y))
 
     return X, Y, V
